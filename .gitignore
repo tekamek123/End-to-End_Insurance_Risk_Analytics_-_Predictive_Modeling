@@ -64,3 +64,10 @@ Thumbs.db
 *.log
 logs/
 
+# DVC
+.dvc/cache/
+.dvc/tmp/
+.dvc/lock
+.dvc/rwlock
+dvc_storage/
+
