@@ -3,11 +3,17 @@ Exploratory Data Analysis (EDA) for Insurance Risk Analytics
 Task 1: Project Planning - EDA & Statistics
 """
 
+import sys
+from pathlib import Path
+
+# Add project root to path for imports
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from pathlib import Path
 import warnings
 from typing import Optional
 
@@ -21,7 +27,13 @@ from src.utils import (
 warnings.filterwarnings('ignore')
 
 # Set style for beautiful plots
-plt.style.use('seaborn-v0_8-darkgrid')
+try:
+    plt.style.use('seaborn-v0_8-darkgrid')
+except OSError:
+    try:
+        plt.style.use('seaborn-darkgrid')
+    except OSError:
+        plt.style.use('ggplot')
 sns.set_palette("husl")
 
 
@@ -42,8 +54,8 @@ class InsuranceEDA:
         self.df = load_insurance_data(file_path=data_path)
         self.df = prepare_data_for_analysis(self.df)
         
-        # Create output directory
-        self.output_dir = Path("outputs/figures")
+        # Create output directory (relative to project root)
+        self.output_dir = project_root / "outputs" / "figures"
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
         print(f"\nData shape: {self.df.shape}")
