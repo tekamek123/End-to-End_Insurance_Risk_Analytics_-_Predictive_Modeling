@@ -17,6 +17,7 @@
 ### 1.2 Project Planning - EDA & Statistics ✓
 
 #### Data Understanding
+
 - [x] Data loading utilities (`src/data_loader.py`)
   - Handles pipe-delimited format
   - Supports data sampling for faster exploration
@@ -24,28 +25,34 @@
   - Derived feature creation (LossRatio, Year, Month, etc.)
 
 #### Exploratory Data Analysis (EDA)
+
 - [x] **Data Summarization** (`src/eda.py`)
+
   - Descriptive statistics for numerical variables
   - Variability measures (Coefficient of Variation)
   - Data structure analysis (dtypes, column counts)
 
 - [x] **Data Quality Assessment**
+
   - Missing value analysis
   - Duplicate detection
   - Data quality summary report
 
 - [x] **Univariate Analysis**
+
   - Histograms for numerical columns (TotalPremium, TotalClaims, SumInsured, CustomValueEstimate)
   - Bar charts for categorical columns (Province, Gender, VehicleType, CoverType)
   - Distribution visualizations with log scale where appropriate
 
 - [x] **Bivariate/Multivariate Analysis**
+
   - Correlation matrix for financial variables
   - Monthly trends (Premium vs Claims over time)
   - Scatter plots: Premium vs Claims by Province
   - Geographic comparisons
 
 - [x] **Outlier Detection**
+
   - Box plots for key numerical variables
   - IQR-based outlier detection
   - Outlier count and percentage reporting
@@ -56,6 +63,7 @@
   3. **Temporal Evolution Dashboard**: 4-panel view of key metrics over time
 
 #### Guiding Questions Answered
+
 - [x] **Overall Loss Ratio**: Calculated and reported
 - [x] **Loss Ratio by Province**: Breakdown analysis
 - [x] **Loss Ratio by VehicleType**: Vehicle risk analysis
@@ -96,17 +104,20 @@ week3/
 ## Key Features
 
 ### Modular Code Design
+
 - Object-oriented approach with `InsuranceEDA` class
 - Reusable utility functions
 - Clean separation of concerns
 
 ### Statistical Analysis
+
 - Loss Ratio calculations
 - IQR-based outlier detection
 - Correlation analysis
 - Temporal trend analysis
 
 ### Visualization Quality
+
 - Professional styling with seaborn
 - High-resolution outputs (300 DPI)
 - Comprehensive labeling and titles
@@ -115,16 +126,19 @@ week3/
 ## How to Run
 
 ### Option 1: Python Script
+
 ```bash
 python src/eda.py
 ```
 
 ### Option 2: Jupyter Notebook
+
 ```bash
 jupyter notebook notebooks/task1_eda.ipynb
 ```
 
 ### Option 3: Interactive Python
+
 ```python
 from src.eda import InsuranceEDA
 eda = InsuranceEDA()
@@ -134,6 +148,7 @@ eda.run_full_eda()
 ## Output Files Generated
 
 All visualizations are saved to `outputs/figures/`:
+
 - `univariate_numerical_distributions.png`
 - `univariate_categorical_distributions.png`
 - `correlation_matrix.png`
@@ -155,4 +170,3 @@ All visualizations are saved to `outputs/figures/`:
 - Machine Learning Models
 - Feature Engineering
 - Model Evaluation and Reporting
-
