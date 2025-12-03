@@ -21,7 +21,13 @@ from src.utils import (
 warnings.filterwarnings('ignore')
 
 # Set style for beautiful plots
-plt.style.use('seaborn-v0_8-darkgrid')
+try:
+    plt.style.use('seaborn-v0_8-darkgrid')
+except OSError:
+    try:
+        plt.style.use('seaborn-darkgrid')
+    except OSError:
+        plt.style.use('ggplot')
 sns.set_palette("husl")
 
 
