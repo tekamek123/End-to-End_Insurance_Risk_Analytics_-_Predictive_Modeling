@@ -1,20 +1,21 @@
 """
 Generate Interim Report for Insurance Risk Analytics Project
-Covers Task 1 (EDA) and Task 2 (DVC Setup) - Concise 3-4 page version
+Covers Task 1 (EDA) and Task 2 (DVC Setup) - Enhanced version with visualizations
 """
 
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
 from datetime import datetime
 from pathlib import Path
+import os
 
 
 def create_interim_report(output_path="outputs/reports/interim_report.pdf"):
-    """Create concise 3-4 page interim report PDF"""
+    """Create enhanced 3-4 page interim report PDF with visualizations"""
     
     # Create output directory if it doesn't exist
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
@@ -127,7 +128,85 @@ def create_interim_report(output_path="outputs/reports/interim_report.pdf"):
     # 3. Task 1: EDA Findings
     story.append(Paragraph("3. Task 1: Exploratory Data Analysis - Key Findings", heading1_style))
     
-    story.append(Paragraph("3.1 Overall Portfolio Metrics", heading2_style))
+    story.append(Paragraph("3.1 Data Quality Assessment", heading2_style))
+    
+    quality_text = """
+    Comprehensive data quality analysis was conducted to ensure reliable insights. The dataset 
+    contains 1,000,098 records with 52 original features. Data quality assessment revealed:
+    """
+    story.append(Paragraph(quality_text, body_style))
+    
+    story.append(Paragraph("3.1.1 Missing Value Analysis", heading2_style))
+    
+    missing_data = [
+        ['Column', 'Missing Count', 'Missing %'],
+        ['NumberOfVehiclesInFleet', '1,000,098', '100.00%'],
+        ['CrossBorder', '999,400', '99.93%'],
+        ['CustomValueEstimate', '779,642', '77.96%'],
+        ['Converted', '641,901', '64.18%'],
+        ['Rebuilt', '641,901', '64.18%'],
+        ['WrittenOff', '641,901', '64.18%'],
+        ['LossRatio', '381,634', '38.16%'],
+        ['NewVehicle', '153,295', '15.33%'],
+        ['Bank', '145,961', '14.59%'],
+        ['AccountType', '40,232', '4.02%']
+    ]
+    
+    missing_table = Table(missing_data, colWidths=[2*inch, 1.5*inch, 1.5*inch])
+    missing_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#3949ab')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 9),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('ROWPADDING', (0, 1), (-1, -1), 4),
+    ]))
+    story.append(missing_table)
+    story.append(Spacer(1, 0.1*inch))
+    
+    missing_analysis = """
+    <b>Key Findings:</b> Fleet-related fields show 100% missing values, indicating these features 
+    are not applicable to most policies. CustomValueEstimate missing in 77.96% of records requires 
+    careful handling in modeling. LossRatio missing in 38.16% of records (where TotalPremium = 0). 
+    No duplicate rows detected, indicating clean data ingestion. Missing values in demographic fields 
+    (Bank: 14.59%, AccountType: 4.02%) are manageable and can be handled through imputation or 
+    exclusion strategies.
+    """
+    story.append(Paragraph(missing_analysis, body_style))
+    
+    story.append(Paragraph("3.1.2 Outlier Detection", heading2_style))
+    
+    outlier_text = """
+    Outlier detection using Interquartile Range (IQR) method with 1.5x multiplier identified:
+    """
+    story.append(Paragraph(outlier_text, body_style))
+    
+    outlier_findings = [
+        "TotalClaims: 2,793 outliers (0.28% of records) - extreme claim values requiring investigation",
+        "CustomValueEstimate: 1,785 outliers (0.81% of non-missing records) - high-value vehicles",
+        "TotalPremium: Negative values detected (min: -782.58) - data quality issue requiring correction",
+        "SumInsured: Wide distribution with high variability (CV: 249.65%)"
+    ]
+    
+    for finding in outlier_findings:
+        story.append(Paragraph(f"• {finding}", bullet_style))
+    
+    # Add outlier visualization if available
+    outlier_img_path = "outputs/figures/outlier_detection_boxplots.png"
+    if os.path.exists(outlier_img_path):
+        story.append(Spacer(1, 0.1*inch))
+        img = Image(outlier_img_path, width=5*inch, height=3.5*inch)
+        story.append(img)
+        story.append(Spacer(1, 0.1*inch))
+        story.append(Paragraph("<i>Figure 1: Box plots showing outlier detection for key financial variables</i>",
+                              ParagraphStyle('Caption', parent=styles['Normal'], fontSize=8, 
+                                           alignment=TA_CENTER, fontStyle='italic')))
+    
+    story.append(Paragraph("3.2 Overall Portfolio Metrics", heading2_style))
     
     # Compact metrics table
     metrics_data = [
@@ -155,7 +234,18 @@ def create_interim_report(output_path="outputs/reports/interim_report.pdf"):
     story.append(metrics_table)
     story.append(Spacer(1, 0.15*inch))
     
-    story.append(Paragraph("3.2 Loss Ratio by Segment", heading2_style))
+    story.append(Paragraph("3.3 Loss Ratio by Segment", heading2_style))
+    
+    # Add correlation matrix visualization
+    corr_img_path = "outputs/figures/correlation_matrix.png"
+    if os.path.exists(corr_img_path):
+        img = Image(corr_img_path, width=4.5*inch, height=3.5*inch)
+        story.append(img)
+        story.append(Spacer(1, 0.05*inch))
+        story.append(Paragraph("<i>Figure 2: Correlation matrix of key financial variables</i>",
+                              ParagraphStyle('Caption', parent=styles['Normal'], fontSize=8, 
+                                           alignment=TA_CENTER, fontStyle='italic')))
+        story.append(Spacer(1, 0.1*inch))
     
     # Compact province table
     province_data = [
@@ -187,6 +277,18 @@ def create_interim_report(output_path="outputs/reports/interim_report.pdf"):
     story.append(province_table)
     story.append(Spacer(1, 0.1*inch))
     
+    # Add loss ratio heatmap visualization
+    heatmap_img_path = "outputs/figures/creative_viz1_loss_ratio_heatmap.png"
+    if os.path.exists(heatmap_img_path):
+        story.append(Spacer(1, 0.1*inch))
+        img = Image(heatmap_img_path, width=5.5*inch, height=3.5*inch)
+        story.append(img)
+        story.append(Spacer(1, 0.05*inch))
+        story.append(Paragraph("<i>Figure 3: Loss ratio heatmap by Province and Vehicle Type (lower is better)</i>",
+                              ParagraphStyle('Caption', parent=styles['Normal'], fontSize=8, 
+                                           alignment=TA_CENTER, fontStyle='italic')))
+        story.append(Spacer(1, 0.1*inch))
+    
     findings_text = """
     <b>Key Insights:</b> (1) <b>Geographic Risk:</b> 4.3x difference between highest (Gauteng: 122.20%) 
     and lowest (Northern Cape: 28.27%) risk provinces. (2) <b>Vehicle Type:</b> Heavy Commercial shows 
@@ -196,11 +298,24 @@ def create_interim_report(output_path="outputs/reports/interim_report.pdf"):
     """
     story.append(Paragraph(findings_text, body_style))
     
-    story.append(Paragraph("3.3 Temporal Trends", heading2_style))
+    story.append(Paragraph("3.4 Temporal Trends", heading2_style))
+    
+    # Add temporal visualization
+    temporal_img_path = "outputs/figures/creative_viz3_temporal_evolution.png"
+    if os.path.exists(temporal_img_path):
+        img = Image(temporal_img_path, width=5.5*inch, height=3.5*inch)
+        story.append(img)
+        story.append(Spacer(1, 0.05*inch))
+        story.append(Paragraph("<i>Figure 4: Temporal evolution of key insurance metrics (Feb 2014 - Aug 2015)</i>",
+                              ParagraphStyle('Caption', parent=styles['Normal'], fontSize=8, 
+                                           alignment=TA_CENTER, fontStyle='italic')))
+        story.append(Spacer(1, 0.1*inch))
+    
     temporal_text = """
     Monthly analysis reveals significant volatility: Loss ratio peaked at 139.64% in April 2015, 
     with August 2015 showing unusually low 14.01% (requires investigation). Premium collection 
-    remained stable while claims showed high variability.
+    remained stable while claims showed high variability. The temporal dashboard (Figure 4) shows 
+    clear patterns in policy count, premium, claims, and loss ratio trends over the 18-month period.
     """
     story.append(Paragraph(temporal_text, body_style))
     
@@ -269,11 +384,12 @@ def create_interim_report(output_path="outputs/reports/interim_report.pdf"):
     
     conclusion = """
     The EDA has revealed significant risk segmentation opportunities with 4.3x variation across provinces 
-    and 12x variation across vehicle types. The DVC infrastructure ensures reproducible, auditable analytics 
-    meeting regulatory requirements. Low-risk segments (Northern Cape, Bus vehicles, Female drivers) 
-    present immediate opportunities for premium optimization and market expansion. The project is on track 
-    to deliver actionable recommendations for risk-based pricing and targeted marketing strategies that 
-    will improve ACIS profitability through data-driven risk assessment.
+    and 12x variation across vehicle types. Data quality analysis identified manageable missing value 
+    patterns and outliers requiring attention. The DVC infrastructure ensures reproducible, auditable 
+    analytics meeting regulatory requirements. Low-risk segments (Northern Cape, Bus vehicles, Female 
+    drivers) present immediate opportunities for premium optimization and market expansion. The project 
+    is on track to deliver actionable recommendations for risk-based pricing and targeted marketing 
+    strategies that will improve ACIS profitability through data-driven risk assessment.
     """
     story.append(Paragraph(conclusion, body_style))
     
@@ -290,7 +406,7 @@ def create_interim_report(output_path="outputs/reports/interim_report.pdf"):
     
     # Build PDF
     doc.build(story)
-    print(f"Interim report generated successfully: {output_path}")
+    print(f"Enhanced interim report generated successfully: {output_path}")
 
 
 if __name__ == "__main__":
