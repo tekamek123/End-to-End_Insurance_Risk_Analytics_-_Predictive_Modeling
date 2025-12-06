@@ -395,15 +395,6 @@ def create_interim_report(output_path="outputs/reports/interim_report.pdf"):
     
     story.append(Spacer(1, 0.2*inch))
     
-    # Footer note
-    footer = Paragraph(
-        "<i>Detailed visualizations and analysis outputs available in outputs/figures/ directory. "
-        "All code and analysis notebooks are version-controlled in the project repository.</i>",
-        ParagraphStyle('Footer', parent=styles['Normal'], fontSize=8, alignment=TA_CENTER,
-                      textColor=colors.grey, fontStyle='italic')
-    )
-    story.append(footer)
-    
     # Build PDF
     doc.build(story)
     print(f"Enhanced interim report generated successfully: {output_path}")
