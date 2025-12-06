@@ -234,6 +234,59 @@ def create_interim_report(output_path="outputs/reports/interim_report.pdf"):
     story.append(metrics_table)
     story.append(Spacer(1, 0.15*inch))
     
+    story.append(Paragraph("3.2.1 Descriptive Statistics for Key Financial Variables", heading2_style))
+    
+    desc_stats_text = """
+    Comprehensive descriptive statistics for the primary financial variables reveal the distribution 
+    characteristics and variability in the dataset:
+    """
+    story.append(Paragraph(desc_stats_text, body_style))
+    story.append(Spacer(1, 0.1*inch))
+    
+    # Descriptive statistics table
+    desc_stats_data = [
+        ['Statistic', 'TotalPremium (ZAR)', 'TotalClaims (ZAR)'],
+        ['Mean (Average)', '61.91', '64.86'],
+        ['Median', '2.18', '0.00'],
+        ['Standard Deviation', '230.28', '2,384.07'],
+        ['Minimum', '-782.58', '-12,002.41'],
+        ['Maximum', '65,282.60', '393,092.11'],
+        ['25th Percentile (Q1)', '0.00', '0.00'],
+        ['75th Percentile (Q3)', '21.93', '0.00'],
+        ['Coefficient of Variation', '371.99%', '3,675.66%']
+    ]
+    
+    desc_stats_table = Table(desc_stats_data, colWidths=[2*inch, 2*inch, 2*inch])
+    desc_stats_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#3949ab')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('ALIGN', (1, 1), (-1, -1), 'RIGHT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 9),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('ROWPADDING', (0, 1), (-1, -1), 5),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+    ]))
+    story.append(desc_stats_table)
+    story.append(Spacer(1, 0.1*inch))
+    
+    stats_interpretation = """
+    <b>Key Observations:</b> (1) <b>High Variability:</b> TotalClaims shows extreme variability (CV: 3,675.66%) 
+    compared to TotalPremium (CV: 371.99%), indicating highly skewed distributions. (2) <b>Median vs Mean:</b> 
+    Median TotalPremium (ZAR 2.18) is much lower than mean (ZAR 61.91), indicating right-skewed distribution 
+    with high-value outliers. (3) <b>Zero Claims:</b> Median TotalClaims is ZAR 0.00, with 75% of records 
+    having zero claims, indicating most policies have no claims. (4) <b>Data Quality Issues:</b> Negative 
+    minimum values (-782.58 for Premium, -12,002.41 for Claims) indicate data quality issues requiring 
+    correction. (5) <b>Outliers:</b> Maximum values (ZAR 65,282.60 for Premium, ZAR 393,092.11 for Claims) 
+    represent extreme cases requiring investigation.
+    """
+    story.append(Paragraph(stats_interpretation, body_style))
+    story.append(Spacer(1, 0.15*inch))
+    
     story.append(Paragraph("3.3 Loss Ratio by Segment", heading2_style))
     
     # Add correlation matrix visualization
