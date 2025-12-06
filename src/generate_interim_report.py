@@ -393,8 +393,6 @@ def create_interim_report(output_path="outputs/reports/interim_report.pdf"):
     """
     story.append(Paragraph(conclusion, body_style))
     
-    story.append(Spacer(1, 0.2*inch))
-    
     # Build PDF
     doc.build(story)
     print(f"Enhanced interim report generated successfully: {output_path}")
